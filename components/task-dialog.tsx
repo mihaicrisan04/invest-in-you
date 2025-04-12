@@ -26,14 +26,16 @@ export function TaskDialog({
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
 
-  const handleTitleChange = async (value: string) => {
+  const handleTitleChange = (value: string) => {
     setTitle(value)
+  }
 
+  const handleTitleBlur = async () => {
     // Only get AI suggestion if title has at least 3 words
-    if (value.trim().split(/\s+/).length >= 3) {
+    if (title.trim().split(/\s+/).length >= 3) {
       setIsLoading(true)
       try {
-        const suggestedPrice = await getSuggestedPrice(value)
+        const suggestedPrice = await getSuggestedPrice(title)
         setAmount(suggestedPrice.toString())
       } catch (error) {
         console.error("Error getting price suggestion:", error)
@@ -95,6 +97,7 @@ export function TaskDialog({
               id="title"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
+              onBlur={handleTitleBlur}
               placeholder="E.g., Read for 30 minutes"
               required
             />

@@ -2,20 +2,47 @@
 // We'll replace this with the real implementation once you provide the API keys
 
 export async function getSuggestedPrice(taskTitle: string): Promise<number> {
-  // Simulate API call delay
-  await new Promise((resolve) => setTimeout(resolve, 1000))
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", { 
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+        "HTTP-Referer": "http://localhost:3000",
+        "X-Title": "Invest In You",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "meta-llama/llama-3.3-70b-instruct:free",
+        messages: [
+          {
+            role: "system",
+            content: `You are an AI assistant helping users determine appropriate prices for tasks they might fail to complete.
+            Consider:
+            - The task's importance and impact on the user's life
+            - The user's income level (${50})
+            - The potential consequences of not completing the task
+            Return only a number between 5 and 100 representing the recommended price in dollars that the user should pay if they fail to complete the task.`
+          },
+          {
+            role: "user",
+            content: `Task: ${taskTitle}`
+          }
+        ]
+      })
+    })
 
-  // Simple logic to generate a price based on the task title
-  // This will be replaced with the actual AI call
-  const wordCount = taskTitle.trim().split(/\s+/).length
-  const basePrice = 5
-  const pricePerWord = 0.5
+    if (!response.ok) {
+      throw new Error('Failed to get AI recommendation');
+    }
 
-  let suggestedPrice = basePrice + wordCount * pricePerWord
+    const data = await response.json();
+    const recommendedPrice = parseInt(data.choices[0].message.content);
 
-  // Add some randomness
-  suggestedPrice += Math.random() * 2 - 1
-
-  // Round to 2 decimal places
-  return Math.round(suggestedPrice * 100) / 100
+    // Ensure the price is within reasonable bounds
+    return Math.min(Math.max(recommendedPrice, 5), 100);
+  } catch (error) {
+    console.error('Error getting AI recommendation:', error);
+    // Return a default value if AI service fails
+    return 10;
+  }
 }
