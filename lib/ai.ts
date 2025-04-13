@@ -1,5 +1,3 @@
-// This is a placeholder for the OpenRouter API integration
-// We'll replace this with the real implementation once you provide the API keys
 
 export async function getSuggestedPrice(taskTitle: string): Promise<number> {
   try {

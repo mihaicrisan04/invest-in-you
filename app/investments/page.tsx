@@ -12,8 +12,8 @@ export default function InvestmentsPage() {
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center">
             <Button variant="outline" size="sm" asChild className="mr-4">
-              <Link href="/dashboard">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
+              <Link href="/tasks">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Tasks
               </Link>
             </Button>
             <h1 className="text-2xl font-bold">Your Investments</h1>
